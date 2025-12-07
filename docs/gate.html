@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Flame Division Academy — Access Gate</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #05060a;
+      --panel: #0f1118;
+      --accent: #d4af37;
+      --accent-soft: rgba(212, 175, 55, 0.12);
+      --text: #f7f7fb;
+      --muted: #9da3b5;
+      --danger: #ff6363;
+      --radius-lg: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at top, #171a26 0, var(--bg) 55%);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Segoe UI", sans-serif;
+      color: var(--text);
+      padding: 24px 16px;
+    }
+
+    .gate-shell {
+      max-width: 720px;
+      width: 100%;
+      background: linear-gradient(145deg, #0b0d14, #111421);
+      border-radius: 26px;
+      padding: 24px 20px 26px;
+      box-shadow:
+        0 24px 80px rgba(0, 0, 0, 0.7),
+        0 0 0 1px rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .gate-shell::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at -5% -10%, rgba(212, 175, 55, 0.35), transparent 60%),
+                  radial-gradient(circle at 110% 110%, rgba(97, 218, 251, 0.3), transparent 65%);
+      mix-blend-mode: soft-light;
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .gate-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 1.6rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .tagline {
+      margin: 0 0 24px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      max-width: 540px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .required {
+      color: var(--accent);
+      margin-left: 2px;
+    }
+
+    input[type="password"] {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(3, 6, 18, 0.95);
+      color: var(--text);
+      font-size: 0.98rem;
+      outline: none;
+      transition: border 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+
+    input[type="password"]:focus {
+      border-color: rgba(212, 175, 55, 0.9);
+      box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.4);
+      background: rgba(5, 8, 20, 1);
+    }
+
+    .hint {
+      margin-top: 8px;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .primary-btn {
+      margin-top: 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 22px;
+      border-radius: 999px;
+      border: none;
+      background: radial-gradient(circle at 0 0, #ffe8a3, #d4af37);
+      color: #111;
+      font-weight: 600;
+      font-size: 0.96rem;
+      cursor: pointer;
+      transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+    }
+
+    .primary-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.65);
+      filter: brightness(1.02);
+    }
+
+    .primary-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.7);
+      filter: brightness(0.98);
+    }
+
+    .error {
+      margin-top: 10px;
+      color: var(--danger);
+      font-size: 0.85rem;
+      min-height: 1.2em;
+    }
+
+    .grid {
+      margin-top: 26px;
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 2fr);
+      gap: 18px;
+    }
+
+    .panel {
+      background: radial-gradient(circle at top left, rgba(212, 175, 55, 0.12), transparent 55%),
+                  radial-gradient(circle at bottom right, rgba(97, 218, 251, 0.12), transparent 60%);
+      border-radius: var(--radius-lg);
+      padding: 14px 14px 16px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .panel h2 {
+      margin: 0 0 6px;
+      font-size: 0.95rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .panel p,
+    .panel ul {
+      margin: 0;
+      font-size: 0.84rem;
+      color: var(--muted);
+    }
+
+    .panel ul {
+      padding-left: 18px;
+      margin-top: 6px;
+      list-style: disc;
+    }
+
+    .footnote {
+      margin-top: 20px;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    @media (max-width: 640px) {
+      .gate-shell {
+        padding: 20px 16px 22px;
+      }
+      h1 {
+        font-size: 1.3rem;
+      }
+      .grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="gate-shell">
+    <div class="gate-inner">
+      <header>
+        <h1>Enter Certificate Access Code</h1>
+        <p class="tagline">
+          This gate protects internal certification tools and templates. Only Flame Division staff and
+          authorized operators should proceed.
+        </p>
+      </header>
+
+      <form id="gate-form" novalidate>
+        <label for="access-code">
+          Access code<span class="required">*</span>
+        </label>
+        <input
+          id="access-code"
+          type="password"
+          autocomplete="off"
+          required
+          placeholder="••••••••••••"
+        />
+        <p class="hint">
+          Code is issued directly by Flame Division Academy. Do not share it publicly or post it online.
+        </p>
+
+        <button type="submit" class="primary-btn">
+          <span>Unlock and continue</span> 🔓
+        </button>
+
+        <p id="error" class="error"></p>
+      </form>
+
+      <section class="grid">
+        <article class="panel">
+          <h2>Why this gate exists</h2>
+          <p>
+            Certificate tools sit at a different level than public marketing pages. They represent
+            completed training, verified work, and Flame Division signatures. The gate:
+          </p>
+          <ul>
+            <li>Prevents casual traffic from accessing internal artifacts.</li>
+            <li>Keeps certificate templates from being taken out of context.</li>
+            <li>Signals that certification is earned, not downloaded.</li>
+          </ul>
+        </article>
+
+        <article class="panel">
+          <h2>How access works</h2>
+          <p>
+            Once your code is accepted, this browser session stores a short-lived token in
+            <code>sessionStorage</code>. Any gated page in this repo checks for that token before
+            loading. Closing the browser or clearing site data will reset access and send you back
+            to this gate.
+          </p>
+        </article>
+      </section>
+
+      <p class="footnote">
+        Flame Division Academy · Certificate Engine Gate.  
+        If you reached this page by mistake, simply close the tab.
+      </p>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const ACCESS_TOKEN = "FLAME_CERT_V1"; // 🔑 Set / change your code here
+      const STORAGE_KEY = "flame_cert_access";
+
+      const form = document.getElementById("gate-form");
+      const input = document.getElementById("access-code");
+      const errorEl = document.getElementById("error");
+
+      function setError(msg) {
+        errorEl.textContent = msg || "";
+      }
+
+      form.addEventListener("submit", function (evt) {
+        evt.preventDefault();
+        setError("");
+
+        const value = (input.value || "").trim();
+        if (!value) {
+          setError("Enter the access code provided by Flame Division Academy.");
+          input.focus();
+          return;
+        }
+
+        if (value !== ACCESS_TOKEN) {
+          setError("Access code not recognized. Check with Flame Division if you believe this is an error.");
+          input.select();
+          return;
+        }
+
+        // Store token for this session
+        try {
+          window.sessionStorage.setItem(STORAGE_KEY, ACCESS_TOKEN);
+        } catch (err) {
+          // If storage fails, we still continue, but access will reset on reload.
+        }
+
+        // Respect ?target=... if present
+        const params = new URLSearchParams(window.location.search);
+        const target = params.get("target") || "index.html";
+
+        window.location.href = decodeURIComponent(target);
+      });
+    })();
+  </script>
+</body>
+</html>
