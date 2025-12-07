@@ -84,6 +84,12 @@
       border: 1px solid var(--accent);
     }
 
+    .btn-template {
+      background: #0f172a;
+      color: var(--accent);
+      border: 1px solid rgba(148, 163, 184, 0.7);
+    }
+
     /* Certificate canvas */
     .page {
       flex: 1;
@@ -111,13 +117,13 @@
     }
 
     .certificate-inner {
+      width: 100%;
       border-radius: 12px;
       padding: 40px 64px;
       background: var(--card-bg);
       border: 1px solid rgba(255, 255, 255, 0.04);
       position: relative;
       overflow: hidden;
-      width: 100%;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -270,7 +276,13 @@
       text-transform: uppercase;
     }
 
-    /* Print tweaks */
+    /* Divider for cert block */
+    .apo-divider {
+      border: none;
+      border-top: 1px solid #1f2933;
+      margin: 0.75rem 0 0.5rem;
+    }
+
     @media print {
       body {
         background: #000;
@@ -328,6 +340,8 @@
       <input type="text" name="id" value="FDA-9999" />
     </label>
     <button type="submit" class="btn-apply">Apply</button>
+    <button type="button" class="btn-template" id="btn-msa-template">MSA</button>
+    <button type="button" class="btn-template" id="btn-apo-template">APO L1</button>
     <button type="button" class="btn-print" id="btn-print">Print / Save PDF</button>
   </form>
 
@@ -340,7 +354,7 @@
           <header class="cert-header">
             <div class="cert-title-block">
               <h1>FLAME DIVISION ACADEMY</h1>
-              <p>Master Systems Architect Track</p>
+              <p id="cert-track">Master Systems Architect Track</p>
             </div>
             <div class="cert-badge">
               <div>
@@ -359,11 +373,11 @@
             <p class="course-line" id="cert-course">Master Systems Architect</p>
             <p>and has demonstrated verifiable competence in:</p>
 
-            <p class="competencies">
+            <p class="competencies" id="cert-competencies">
               STRUCTURE · WIRING · FUNCTION · RESPONSIBILITY · CLARITY
             </p>
 
-            <p class="quote">
+            <p class="quote" id="cert-quote">
               “Language without structure is noise. Structure without ethics is danger.”
             </p>
           </main>
@@ -398,13 +412,44 @@
       const dateOut = document.getElementById("cert-date");
       const idOut = document.getElementById("cert-id");
       const statusEl = document.getElementById("js-status");
+
+      const trackEl = document.getElementById("cert-track");
+      const competenciesEl = document.getElementById("cert-competencies");
+      const quoteEl = document.getElementById("cert-quote");
+
       const btnPrint = document.getElementById("btn-print");
+      const btnMsa = document.getElementById("btn-msa-template");
+      const btnApo = document.getElementById("btn-apo-template");
+
+      const TEMPLATES = {
+        "Master Systems Architect": {
+          track: "Master Systems Architect Track",
+          competencies: "STRUCTURE · WIRING · FUNCTION · RESPONSIBILITY · CLARITY",
+          quote: "“Language without structure is noise. Structure without ethics is danger.”"
+        },
+        "AI Patchwork Operator — Level 1": {
+          track: "AI Patchwork Operator Track",
+          competencies: "SPEC · PROMPTING · EXECUTION · REFLECTION · ALIGNMENT",
+          quote: "“Prompt clarity is contract clarity. You are accountable for both.”"
+        }
+      };
+
+      function applyTemplateByCourse(courseValue) {
+        const tpl = TEMPLATES[courseValue];
+        if (!tpl) return;
+        trackEl.textContent = tpl.track;
+        competenciesEl.textContent = tpl.competencies;
+        quoteEl.textContent = tpl.quote;
+      }
 
       function updateFromValues(values) {
         const { name, course, date, id } = values;
 
         if (name) nameOut.textContent = name.toUpperCase();
-        if (course) courseOut.textContent = course;
+        if (course) {
+          courseOut.textContent = course;
+          applyTemplateByCourse(course);
+        }
         if (date) dateOut.textContent = date;
         if (id) idOut.textContent = id;
 
@@ -446,30 +491,53 @@
       btnPrint.addEventListener("click", function () {
         window.print();
       });
+
+      // Quick template: Master Systems Architect
+      btnMsa.addEventListener("click", function () {
+        form.elements.course.value = "Master Systems Architect";
+        updateFromValues({
+          name: form.elements.name.value.trim(),
+          course: "Master Systems Architect",
+          date: form.elements.date.value.trim(),
+          id: form.elements.id.value.trim()
+        });
+      });
+
+      // Quick template: APO Level 1
+      btnApo.addEventListener("click", function () {
+        form.elements.course.value = "AI Patchwork Operator — Level 1";
+        // You can change default ID pattern for APO here if you want
+        // form.elements.id.value = "APO-L1-0001";
+        updateFromValues({
+          name: form.elements.name.value.trim(),
+          course: "AI Patchwork Operator — Level 1",
+          date: form.elements.date.value.trim(),
+          id: form.elements.id.value.trim()
+        });
+      });
     })();
   </script>
 
   <script>
-  (function () {
-    const ACCESS_TOKEN = "FLAME-LIFE"; // must match gate.html
-    const STORAGE_KEY = "flame_cert_access";
+    (function () {
+      const ACCESS_TOKEN = "FLAME-LIFE"; // must match gate.html
+      const STORAGE_KEY = "flame_cert_access";
 
-    let current;
-    try {
-      current = window.sessionStorage.getItem(STORAGE_KEY);
-    } catch (err) {
-      current = null;
-    }
+      let current;
+      try {
+        current = window.sessionStorage.getItem(STORAGE_KEY);
+      } catch (err) {
+        current = null;
+      }
 
-    if (current !== ACCESS_TOKEN) {
-      const pathParts = window.location.pathname.split("/");
-      const fileName = pathParts[pathParts.length - 1] || "index.html";
-      const query = window.location.search || "";
-      const target = encodeURIComponent(fileName + query);
-      window.location.href = "gate.html?target=" + target;
-    }
-  })();
-</script>
+      if (current !== ACCESS_TOKEN) {
+        const pathParts = window.location.pathname.split("/");
+        const fileName = pathParts[pathParts.length - 1] || "index.html";
+        const query = window.location.search || "";
+        const target = encodeURIComponent(fileName + query);
+        window.location.href = "gate.html?target=" + target;
+      }
+    })();
+  </script>
 </body>
 </html>
-
