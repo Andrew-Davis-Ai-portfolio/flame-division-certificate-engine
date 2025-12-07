@@ -448,5 +448,28 @@
       });
     })();
   </script>
+
+  <script>
+  (function () {
+    const ACCESS_TOKEN = "FLAME-LIFE"; // must match gate.html
+    const STORAGE_KEY = "flame_cert_access";
+
+    let current;
+    try {
+      current = window.sessionStorage.getItem(STORAGE_KEY);
+    } catch (err) {
+      current = null;
+    }
+
+    if (current !== ACCESS_TOKEN) {
+      const pathParts = window.location.pathname.split("/");
+      const fileName = pathParts[pathParts.length - 1] || "index.html";
+      const query = window.location.search || "";
+      const target = encodeURIComponent(fileName + query);
+      window.location.href = "gate.html?target=" + target;
+    }
+  })();
+</script>
 </body>
 </html>
+
