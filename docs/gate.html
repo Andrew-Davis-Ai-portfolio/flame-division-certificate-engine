@@ -268,71 +268,49 @@
     </div>
   </div>
 
-  <script>
-    (function () {
-      const ACCESS_TOKEN = "FLAME-LIFE"; // 🔑 Set / change your code here
-      const STORAGE_KEY = "flame_cert_access";
-
-      const form = document.getElementById("gate-form");
-      const input = document.getElementById("access-code");
-      const errorEl = document.getElementById("error");
-
-      function setError(msg) {
-        errorEl.textContent = msg || "";
-      }
-
-      form.addEventListener("submit", function (evt) {
-        evt.preventDefault();
-        setError("");
-
-        const value = (input.value || "").trim();
-        if (!value) {
-          setError("Enter the access code provided by Flame Division Academy.");
-          input.focus();
-          return;
-        }
-
-        if (value !== ACCESS_TOKEN) {
-          setError("Access code not recognized. Check with Flame Division if you believe this is an error.");
-          input.select();
-          return;
-        }
-
-        // Store token for this session
-        try {
-          window.sessionStorage.setItem(STORAGE_KEY, ACCESS_TOKEN);
-        } catch (err) {
-          // If storage fails, we still continue, but access will reset on reload.
-        }
-
-        // Respect ?target=... if present
-        const params = new URLSearchParams(window.location.search);
-        const target = params.get("target") || "index.html";
-
-        window.location.href = decodeURIComponent(target);
-      });
-    })();
-  </script>
-
-  <script>
+<script>
   (function () {
-    const ACCESS_TOKEN = "FLAME-LIFE"; // must match gate.html
+    const ACCESS_TOKEN = "FLAME-LIFE"; // 🔑 your code
     const STORAGE_KEY = "flame_cert_access";
 
-    let current;
-    try {
-      current = window.sessionStorage.getItem(STORAGE_KEY);
-    } catch (err) {
-      current = null;
+    const form = document.getElementById("gate-form");
+    const input = document.getElementById("access-code");
+    const errorEl = document.getElementById("error");
+
+    function setError(msg) {
+      errorEl.textContent = msg || "";
     }
 
-    if (current !== ACCESS_TOKEN) {
-      const pathParts = window.location.pathname.split("/");
-      const fileName = pathParts[pathParts.length - 1] || "index.html";
-      const query = window.location.search || "";
-      const target = encodeURIComponent(fileName + query);
-      window.location.href = "gate.html?target=" + target;
-    }
+    form.addEventListener("submit", function (evt) {
+      evt.preventDefault();
+      setError("");
+
+      const value = (input.value || "").trim();
+      if (!value) {
+        setError("Enter the access code provided by Flame Division Academy.");
+        input.focus();
+        return;
+      }
+
+      if (value !== ACCESS_TOKEN) {
+        setError("Access code not recognized. Check with Flame Division if you believe this is an error.");
+        input.select();
+        return;
+      }
+
+      // Store token for this session
+      try {
+        window.sessionStorage.setItem(STORAGE_KEY, ACCESS_TOKEN);
+      } catch (err) {
+        // If storage fails, user will just have to re-enter on reload.
+      }
+
+      // Respect ?target=... if present
+      const params = new URLSearchParams(window.location.search);
+      const target = params.get("target") || "index.html";
+
+      window.location.href = decodeURIComponent(target);
+    });
   })();
 </script>
 </body>
