@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Flame Division Academy — Certificate Generator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #05070b;
+      --card-bg: radial-gradient(circle at top left, #252b36 0, #070a10 55%, #05070b 100%);
+      --gold: #d9af4f;
+      --gold-soft: #b38b36;
+      --text-main: #f5f5f5;
+      --text-muted: #b4bcc7;
+      --accent: #f7d37b;
+      --badge-size: 140px;
+      --font-main: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: #000;
+      color: var(--text-main);
+      font-family: var(--font-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: center;
+    }
+
+    /* Control bar */
+    .controls {
+      background: #05070b;
+      color: var(--text-muted);
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid #141824;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+    }
+
+    .controls label {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .controls input {
+      background: #0d1117;
+      border: 1px solid #272c39;
+      border-radius: 4px;
+      padding: 0.2rem 0.45rem;
+      color: #f5f5f5;
+      font-size: 0.8rem;
+    }
+
+    .controls button {
+      border-radius: 999px;
+      border: none;
+      padding: 0.35rem 0.9rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-apply {
+      background: #1f6feb;
+      color: #fff;
+    }
+
+    .btn-print {
+      background: transparent;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+    }
+
+    /* Certificate canvas */
+    .page {
+      flex: 1;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .certificate-frame {
+      width: 100%;
+      max-width: 1100px;
+      aspect-ratio: 16 / 9;
+      border-radius: 16px;
+      padding: 16px;
+      background: radial-gradient(circle at top left, #302713 0, #05070b 65%);
+      border: 1px solid #73551b;
+      box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.8),
+        0 16px 40px rgba(0, 0, 0, 0.85);
+      display: flex;
+      align-items: stretch;
+      justify-content: stretch;
+    }
+
+    .certificate-inner {
+      border-radius: 12px;
+      padding: 40px 64px;
+      background: var(--card-bg);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* Faint vignette */
+    .certificate-inner::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 20% 10%, rgba(255, 255, 255, 0.12), transparent 55%),
+        radial-gradient(circle at 90% 0%, rgba(255, 255, 255, 0.08), transparent 60%);
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    .certificate-content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      justify-content: space-between;
+    }
+
+    .cert-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .cert-title-block h1 {
+      font-size: clamp(1.6rem, 2vw, 2rem);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-main);
+      margin-bottom: 0.25rem;
+    }
+
+    .cert-title-block p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .cert-badge {
+      width: var(--badge-size);
+      height: var(--badge-size);
+      border-radius: 50%;
+      border: 3px solid var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at 30% 0%, #0f1924 0, #05070b 60%);
+      box-shadow:
+        0 0 25px rgba(255, 215, 140, 0.5),
+        0 0 0 2px rgba(0, 0, 0, 0.8);
+      font-size: 0.7rem;
+      text-align: center;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      padding: 0.7rem;
+    }
+
+    .cert-main {
+      text-align: center;
+      margin-bottom: 2.2rem;
+    }
+
+    .cert-main .label {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .cert-name {
+      display: inline-block;
+      padding: 0.65rem 1.9rem;
+      border-radius: 999px;
+      border: 2px solid var(--gold);
+      background: rgba(3, 7, 18, 0.85);
+      color: var(--accent);
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-size: 1.05rem;
+      margin-bottom: 1rem;
+    }
+
+    .cert-main p {
+      margin: 0.3rem 0;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+
+    .cert-main .course-line {
+      color: #ffffff;
+      font-size: 1.05rem;
+      font-weight: 500;
+    }
+
+    .competencies {
+      margin-top: 1.15rem;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      color: #e7ecf5;
+    }
+
+    .quote {
+      margin-top: 0.9rem;
+      font-size: 0.75rem;
+      color: var(--accent);
+    }
+
+    .cert-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 1rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .footer-left p + p {
+      margin-top: 0.3rem;
+    }
+
+    .footer-right {
+      text-align: right;
+    }
+
+    .sig-name {
+      color: #f7f7f7;
+    }
+
+    .sig-role {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .js-status {
+      margin-top: 0.75rem;
+      font-size: 0.7rem;
+      color: var(--accent);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    /* Print tweaks */
+    @media print {
+      body {
+        background: #000;
+      }
+      .controls {
+        display: none;
+      }
+      .page {
+        padding: 0;
+      }
+      .certificate-frame {
+        box-shadow: none;
+        border-radius: 0;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .certificate-inner {
+        padding: 28px 20px;
+      }
+      .cert-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .cert-badge {
+        align-self: flex-end;
+        width: 110px;
+        height: 110px;
+        font-size: 0.6rem;
+      }
+      .competencies {
+        letter-spacing: 0.18em;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Control bar -->
+  <form class="controls" id="cert-form">
+    <label>
+      Name
+      <input type="text" name="name" value="Commander Flame" />
+    </label>
+    <label>
+      Course
+      <input type="text" name="course" value="Master Systems Architect" />
+    </label>
+    <label>
+      Date
+      <input type="text" name="date" value="2025-12-06" />
+    </label>
+    <label>
+      Cert ID
+      <input type="text" name="id" value="FDA-9999" />
+    </label>
+    <button type="submit" class="btn-apply">Apply</button>
+    <button type="button" class="btn-print" id="btn-print">Print / Save PDF</button>
+  </form>
+
+  <!-- Certificate canvas -->
+  <div class="page">
+    <div class="certificate-frame">
+      <div class="certificate-inner">
+        <div class="certificate-content">
+          <!-- HEADER -->
+          <header class="cert-header">
+            <div class="cert-title-block">
+              <h1>FLAME DIVISION ACADEMY</h1>
+              <p>Master Systems Architect Track</p>
+            </div>
+            <div class="cert-badge">
+              <div>
+                FLAME DIVISION<br />ACADEMY<br /><br />
+                CERTIFIED UNDER FLAME LAW
+              </div>
+            </div>
+          </header>
+
+          <!-- MAIN -->
+          <main class="cert-main">
+            <div class="label">This certifies that</div>
+            <div class="cert-name" id="cert-name">COMMANDER FLAME</div>
+
+            <p>has successfully completed</p>
+            <p class="course-line" id="cert-course">Master Systems Architect</p>
+            <p>and has demonstrated verifiable competence in:</p>
+
+            <p class="competencies">
+              STRUCTURE · WIRING · FUNCTION · RESPONSIBILITY · CLARITY
+            </p>
+
+            <p class="quote">
+              “Language without structure is noise. Structure without ethics is danger.”
+            </p>
+          </main>
+
+          <!-- FOOTER -->
+          <footer>
+            <div class="cert-footer">
+              <div class="footer-left">
+                <p>Date Issued: <span id="cert-date">2025-12-06</span></p>
+                <p>Certificate ID: <span id="cert-id">FDA-9999</span></p>
+              </div>
+              <div class="footer-right">
+                <p class="sig-name">Commander Flame, CAIO</p>
+                <p class="sig-role">Flame Division Academy · Tutor AI</p>
+              </div>
+            </div>
+
+            <div class="js-status" id="js-status">
+              JS ACTIVE · name=Commander Flame;course=Master Systems Architect;date=2025-12-06;id=FDA-9999
+            </div>
+          </footer>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const form = document.getElementById("cert-form");
+      const nameOut = document.getElementById("cert-name");
+      const courseOut = document.getElementById("cert-course");
+      const dateOut = document.getElementById("cert-date");
+      const idOut = document.getElementById("cert-id");
+      const statusEl = document.getElementById("js-status");
+      const btnPrint = document.getElementById("btn-print");
+
+      function updateFromValues(values) {
+        const { name, course, date, id } = values;
+
+        if (name) nameOut.textContent = name.toUpperCase();
+        if (course) courseOut.textContent = course;
+        if (date) dateOut.textContent = date;
+        if (id) idOut.textContent = id;
+
+        statusEl.textContent =
+          "JS ACTIVE · " +
+          "name=" + (name || "") +
+          ";course=" + (course || "") +
+          ";date=" + (date || "") +
+          ";id=" + (id || "");
+      }
+
+      // Read values from query string (optional shortcut)
+      const params = new URLSearchParams(window.location.search);
+      const initial = {
+        name: params.get("name") || form.elements.name.value,
+        course: params.get("course") || form.elements.course.value,
+        date: params.get("date") || form.elements.date.value,
+        id: params.get("id") || form.elements.id.value
+      };
+
+      form.elements.name.value = initial.name;
+      form.elements.course.value = initial.course;
+      form.elements.date.value = initial.date;
+      form.elements.id.value = initial.id;
+
+      updateFromValues(initial);
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        const values = {
+          name: form.elements.name.value.trim(),
+          course: form.elements.course.value.trim(),
+          date: form.elements.date.value.trim(),
+          id: form.elements.id.value.trim()
+        };
+        updateFromValues(values);
+      });
+
+      btnPrint.addEventListener("click", function () {
+        window.print();
+      });
+    })();
+  </script>
+</body>
+</html>
