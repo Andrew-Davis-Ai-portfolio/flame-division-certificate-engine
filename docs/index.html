@@ -129,7 +129,6 @@
       justify-content: space-between;
     }
 
-    /* Faint vignette */
     .certificate-inner::before {
       content: "";
       position: absolute;
@@ -276,13 +275,6 @@
       text-transform: uppercase;
     }
 
-    /* Divider for cert block */
-    .apo-divider {
-      border: none;
-      border-top: 1px solid #1f2933;
-      margin: 0.75rem 0 0.5rem;
-    }
-
     @media print {
       body {
         background: #000;
@@ -340,8 +332,16 @@
       <input type="text" name="id" value="FDA-9999" />
     </label>
     <button type="submit" class="btn-apply">Apply</button>
+
+    <!-- Template buttons -->
     <button type="button" class="btn-template" id="btn-msa-template">MSA</button>
     <button type="button" class="btn-template" id="btn-apo-template">APO L1</button>
+    <button type="button" class="btn-template" id="btn-awo-template">AWO L1</button>
+    <button type="button" class="btn-template" id="btn-kwo-template">KWO L1</button>
+    <button type="button" class="btn-template" id="btn-aws-template">AWS L1</button>
+    <button type="button" class="btn-template" id="btn-dual-template">Dual</button>
+    <button type="button" class="btn-template" id="btn-walker-template">Flame Walker</button>
+
     <button type="button" class="btn-print" id="btn-print">Print / Save PDF</button>
   </form>
 
@@ -420,6 +420,11 @@
       const btnPrint = document.getElementById("btn-print");
       const btnMsa = document.getElementById("btn-msa-template");
       const btnApo = document.getElementById("btn-apo-template");
+      const btnAwo = document.getElementById("btn-awo-template");
+      const btnKwo = document.getElementById("btn-kwo-template");
+      const btnAws = document.getElementById("btn-aws-template");
+      const btnDual = document.getElementById("btn-dual-template");
+      const btnWalker = document.getElementById("btn-walker-template");
 
       const TEMPLATES = {
         "Master Systems Architect": {
@@ -431,6 +436,31 @@
           track: "AI Patchwork Operator Track",
           competencies: "SPEC · PROMPTING · EXECUTION · REFLECTION · ALIGNMENT",
           quote: "“Prompt clarity is contract clarity. You are accountable for both.”"
+        },
+        "AI Workflow Operator — Level 1": {
+          track: "AI Workflow Operator Track",
+          competencies: "WORKFLOW REASONING · DECISION LOGGING · FAILURE MODES · ESCALATION · ALIGNMENT",
+          quote: "“In AI workflows, undocumented decisions are unmanaged risks.”"
+        },
+        "Kubernetes Workflow Operator — Level 1": {
+          track: "Kubernetes Workflow Operator Track",
+          competencies: "CLUSTER REASONING · DEPLOYMENT STRATEGY · RISK AWARENESS · INCIDENT THINKING · ALIGNMENT",
+          quote: "“Operating a cluster means thinking in blast radius, not just YAML.”"
+        },
+        "AWS Workflow Operator — Level 1": {
+          track: "AWS Workflow Operator Track",
+          competencies: "ARCHITECTURE · COST AWARENESS · SECURITY POSTURE · RESILIENCE · ALIGNMENT",
+          quote: "“Every cloud decision is a trade — cost, risk, and performance move together.”"
+        },
+        "Dual Operator Certification": {
+          track: "Dual Operator Certification — Phase II",
+          competencies: "AI WORKFLOWS · CLOUD WORKFLOWS · CROSS-DOMAIN REASONING · GOVERNANCE · ALIGNMENT",
+          quote: "“Dual operators bridge systems, not silos.”"
+        },
+        "Flame Walker Operator": {
+          track: "Flame Walker Operator Designation",
+          competencies: "MULTI-TRACK COMPLETION · DOCUMENTED PRACTICE · RESPONSIBILITY UNDER LOAD · CONTINUOUS ALIGNMENT",
+          quote: "“Flame-Walkers carry evidence, not claims.”"
         }
       };
 
@@ -492,28 +522,42 @@
         window.print();
       });
 
-      // Quick template: Master Systems Architect
-      btnMsa.addEventListener("click", function () {
-        form.elements.course.value = "Master Systems Architect";
+      function quickTemplate(courseName) {
+        form.elements.course.value = courseName;
         updateFromValues({
           name: form.elements.name.value.trim(),
-          course: "Master Systems Architect",
+          course: courseName,
           date: form.elements.date.value.trim(),
           id: form.elements.id.value.trim()
         });
+      }
+
+      btnMsa.addEventListener("click", function () {
+        quickTemplate("Master Systems Architect");
       });
 
-      // Quick template: APO Level 1
       btnApo.addEventListener("click", function () {
-        form.elements.course.value = "AI Patchwork Operator — Level 1";
-        // You can change default ID pattern for APO here if you want
-        // form.elements.id.value = "APO-L1-0001";
-        updateFromValues({
-          name: form.elements.name.value.trim(),
-          course: "AI Patchwork Operator — Level 1",
-          date: form.elements.date.value.trim(),
-          id: form.elements.id.value.trim()
-        });
+        quickTemplate("AI Patchwork Operator — Level 1");
+      });
+
+      btnAwo.addEventListener("click", function () {
+        quickTemplate("AI Workflow Operator — Level 1");
+      });
+
+      btnKwo.addEventListener("click", function () {
+        quickTemplate("Kubernetes Workflow Operator — Level 1");
+      });
+
+      btnAws.addEventListener("click", function () {
+        quickTemplate("AWS Workflow Operator — Level 1");
+      });
+
+      btnDual.addEventListener("click", function () {
+        quickTemplate("Dual Operator Certification");
+      });
+
+      btnWalker.addEventListener("click", function () {
+        quickTemplate("Flame Walker Operator");
       });
     })();
   </script>
